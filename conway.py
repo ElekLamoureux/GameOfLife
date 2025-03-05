@@ -62,13 +62,12 @@ r = random.randint(0, 255)
 g = random.randint(100, 255)
 b = random.randint(0, 255)
 unpaused = True
+pendown = False
 while running:
     pygame.display.flip()
     count = count + 1
     #seems to be in every pygame loop? Allows for stopping of program? Still dont fully understand
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    
     if count == speed:
         if unpaused:          
             #update the grid            
@@ -89,16 +88,24 @@ while running:
         else:
             unpaused = True
         pygame.time.wait(300)
-
     for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
         if event.type == pygame.MOUSEBUTTONDOWN:  # Detect mouse click
-            x, y = pygame.mouse.get_pos()
-            print(f"Mouse clicked at: ({x}, {y})")
-            cellx = int(x/pixilsize)
-            celly = int(y/pixilsize)
-            print(f'Maps to cell (x,y) = ({cellx}, {celly})')
-            grid[cellx][celly] = 1-grid[cellx][celly]
-            drawgrid(grid) 
+            pendown = True
+            checker = copy.deepcopy(grid)
+        if event.type == pygame.MOUSEBUTTONUP:
+            pendown = False
+    if pendown:
+        x, y = pygame.mouse.get_pos()
+        cellx = int(x/pixilsize)
+        celly = int(y/pixilsize)
+        if grid[cellx][celly] == checker[cellx][celly]:
+            grid[cellx][celly] = 1-grid[cellx][celly]        
+            #print(f"Mouse down at: ({x}, {y})")        
+            #print(f'Maps to cell (x,y) = ({cellx}, {celly})')
+            drawgrid(grid)
+        
 
     
     dt = clock.tick(10000)
