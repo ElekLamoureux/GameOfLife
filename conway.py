@@ -7,7 +7,7 @@ import copy
 #setup
 pygame.init()
 size = 500
-res = 50
+res = 100
 pixilsize = size / res
 screen = pygame.display.set_mode((size, size))
 screen.fill("white")
@@ -55,7 +55,7 @@ for x in range(res):
         grid[x].append(random.randint(0, 1))
         #grid[x].append(0)
 count = 0
-speed = 100
+speed = 10
 
 running = True
 r = random.randint(0, 255)
@@ -79,9 +79,11 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_x]:
         running = False
-        
+    if keys[pygame.K_c]:
+        for x in range(res):
+            for y in range(res):
+                grid[x][y] = 0                    
     if keys[pygame.K_SPACE]:
-        print("spacebar was pressed!")
         count = 0
         if unpaused:
             unpaused = False
@@ -98,14 +100,15 @@ while running:
             pendown = False
     if pendown:
         x, y = pygame.mouse.get_pos()
-        cellx = int(x/pixilsize)
-        celly = int(y/pixilsize)
+        if x < size and y < size and x > 0 and y > 0:
+            cellx = int(x/pixilsize)
+            celly = int(y/pixilsize)
         if grid[cellx][celly] == checker[cellx][celly]:
             grid[cellx][celly] = 1-grid[cellx][celly]        
             #print(f"Mouse down at: ({x}, {y})")        
             #print(f'Maps to cell (x,y) = ({cellx}, {celly})')
             drawgrid(grid)
-        
+            
 
     
     dt = clock.tick(10000)
